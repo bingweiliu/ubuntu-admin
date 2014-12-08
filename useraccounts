@@ -1,0 +1,44 @@
+#!/bin/bash
+while read username name
+do
+#create a random password
+NEWPASS=$(makepasswd)
+
+#create a user account
+useradd $username -m -s /bin/bash
+
+#set the user's new password
+echo "$NEWPASS
+$NEWPASS
+" | passwd $username &>/dev/null 
+
+#add the user's password to a list for bingwei
+echo $username $NEWPASS >> passwd.txt
+# Copy the jpg file to the user's home directory
+#message the user with their username
+echo "To: $username@binghamton.edu
+Subject: Account Reset
+From: admin@Computer-Design
+
+Hello, $name!
+
+Your account for Computer Design class has been reset. Here is your account information:
+
+Username: $username
+Password: $NEWPASS
+Server IP: 192.168.0.2
+
+ 
+The server's OS is Ubuntu 12.04. You can now ssh to the server. 
+
+Remember to change your password once you login.
+
+If you have any trouble logging in or want to setup a GUI for the system, please let me know.
+
+-admin
+admin@company.com
+-------------------------
+This email is sent by the server automatically. 
+DO NOT reply to the sender.
+." | sendmail -t
+done  
